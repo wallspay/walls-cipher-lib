@@ -22,7 +22,7 @@ func NewAESGCMLibrary(keyString string) *AESGCMLibrary {
 	return &AESGCMLibrary{key: []byte(keyString)}
 }
 
-func (l *AESGCMLibrary) Encrypt(plaintext []byte) (string, error) {
+func (l *AESGCMLibrary) Encrypt(plaintext string) (string, error) {
 	block, err := aes.NewCipher(l.key)
 	if err != nil {
 		return "", err
@@ -38,7 +38,7 @@ func (l *AESGCMLibrary) Encrypt(plaintext []byte) (string, error) {
 		return "", err
 	}
 
-	ciphertext := gcm.Seal(nonce, nonce, plaintext, nil)
+	ciphertext := gcm.Seal(nonce, nonce, []byte(plaintext), nil)
 	return base64.StdEncoding.EncodeToString(ciphertext), nil
 }
 
