@@ -14,7 +14,6 @@ import (
 type CypherLibrary interface {
     Encrypt(plaintext string) (string, error)
     Decrypt(ciphertext string) (string, error)
-	Hash(plaintext string)(string,error)
 }
 
 type AESGCMLibrary struct {
@@ -83,7 +82,7 @@ func (l *AESGCMLibrary) Decrypt(encryptedText string) (string, error) {
     return string(plaintext), nil
 }
 
-func (l *AESGCMLibrary) Hash(plaintext string) (string, error) {
+func HashString(plaintext string) (string, error) {
     if plaintext == "" {
         return "", errors.New("input string is empty")
     }
