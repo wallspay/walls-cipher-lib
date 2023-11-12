@@ -86,7 +86,6 @@ func HashString(plaintext string) (string, error) {
     if plaintext == "" {
         return "", errors.New("input string is empty")
     }
-
     hasher := sha256.New()
     hasher.Write([]byte(plaintext))
     return hex.EncodeToString(hasher.Sum(nil)), nil
