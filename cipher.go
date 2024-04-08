@@ -119,7 +119,7 @@ func (r *RSAKeysGenerator) GenerateKeys() ([]byte, []byte, error) {
     pubKeyBytes := x509.MarshalPKCS1PublicKey(&pubKey)
 
     // encode private key to PKCS#1 ASN.1 PEM.
-    // keyPEM := pem.EncodeToMemory(
+    // privPEM := pem.EncodeToMemory(
     //     &pem.Block{
     //         Type:  "RSA PRIVATE KEY",
     //         Bytes: x509.MarshalPKCS1PrivateKey(privKey),
