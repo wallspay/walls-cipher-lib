@@ -1,14 +1,17 @@
 package wallscipherlib
 
 import (
-    "crypto/aes"
-    "crypto/cipher"
-    "crypto/rand"
-    "crypto/sha256"
-    "encoding/base64"
-    "encoding/hex"
-    "errors"
-    "io"
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
+	"crypto/x509"
+	"encoding/base64"
+	"encoding/hex"
+	// "encoding/pem"
+	"errors"
+	"io"
 )
 
 type CypherLibrary interface {
@@ -89,4 +92,47 @@ func HashString(plaintext string) (string, error) {
     hasher := sha256.New()
     hasher.Write([]byte(plaintext))
     return hex.EncodeToString(hasher.Sum(nil)), nil
+}
+
+type RSAKeysGenerator struct {
+    bits int
+}
+
+// provides an instance of RSAKeysGenerator with the specifies bits size e.g 1024, 2048 e.t.c
+func NewRSAKeysGenerator(bits int) *RSAKeysGenerator {
+    return &RSAKeysGenerator{
+        bits: bits,
+    }
+}
+
+// returns a pair of rsa private key bytes and rsa public key bytes. if an error occurs, the return keys will be nil not empty bytes slice.
+func (r *RSAKeysGenerator) GenerateKeys() ([]byte, []byte, error) {
+    privKey, err := rsa.GenerateKey(rand.Reader, r.bits)
+    if err != nil {
+        return nil, nil, err
+    }
+
+    pubKey := privKey.PublicKey
+
+    privateKeyBytes := x509.MarshalPKCS1PrivateKey(privKey)
+
+    pubKeyBytes := x509.MarshalPKCS1PublicKey(&pubKey)
+
+    // encode private key to PKCS#1 ASN.1 PEM.
+    // privPEM := pem.EncodeToMemory(
+    //     &pem.Block{
+    //         Type:  "RSA PRIVATE KEY",
+    //         Bytes: x509.MarshalPKCS1PrivateKey(privKey),
+    //     },
+    // )
+
+    // encode public key to PKCS#1 ASN.1 PEM.
+    // pubPEM := pem.EncodeToMemory(
+    //     &pem.Block{
+    //         Type:  "RSA PUBLIC KEY",
+    //         Bytes: x509.MarshalPKCS1PublicKey(&pubKey),
+    //     },
+    // )
+
+    return privateKeyBytes, pubKeyBytes, nil
 }
